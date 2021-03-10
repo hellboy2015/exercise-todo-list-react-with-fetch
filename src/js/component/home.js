@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 
-import { NewTask } from "./newTask.js";
+//import { NewTask } from "./newTask.js";
 
 //create your first component
 export function Home() {
 	const [inputValue, setInputValue] = useState("");
 	const [taskList, setTaskList] = useState("");
+	const [isShown, setIsShown] = useState(false);
 
 	const handleKeyDown = event => {
 		if (event.key === "Enter") {
 			setTaskList([...taskList, inputValue]);
 			setInputValue("");
 		}
-    };
-    function keyGenerator() {
-        return Math.floor(Math.random()*50);
-    }
+	};
+
+	function removeTask(taskToRemoveID) {
+		taskList.splice(taskToRemoveID, 1);
+	}
 
 	return (
 		<div className="mt-5">
@@ -34,13 +36,31 @@ export function Home() {
 					/>
 				</div>
 				{taskList[0] === undefined ? (
-					<NewTask task="No tasks, add a task" />
+					<div className="newTask mx-auto row">
+						<div className="col-11">No tasks, add a task</div>
+					</div>
 				) : (
-					taskList.map(newTask => <NewTask key={keyGenerator()} task={newTask} />)
+					taskList.map((newTask, index) => (
+						<div
+							key={index}
+							className="newTask mx-auto row"
+							onMouseEnter={e => setIsShown(true)}
+							onMouseLeave={e => setIsShown(false)}>
+							<div className="col-11">{newTask}</div>
+
+							{isShown && (
+								<div
+									className="removeTask col-1"
+									onClick={e => removeTask(index)}>
+									X
+								</div>
+							)}
+						</div>
+					))
 				)}
 			</div>
 			<div className="itemCounter">
-				<div className="inner">{"4 Items left"}</div>
+				<div className="inner">{`${taskList.length} Items left`}</div>
 			</div>
 		</div>
 	);
