@@ -11,3 +11,61 @@
     import 'relative/path/to/stylesheet.scss';
 
 */
+
+#newTaskInput{
+    border: none;
+}
+h1{
+    color:#EADFE0;
+}
+
+.itemCounter {
+  position: relative;
+  margin: 0 auto 2em;
+  width: 80%;
+}
+.newTask{
+    color: rgb(150, 150, 150);
+  padding: 10px;
+  border-radius: 0;
+  background-color: #f2f2f2;
+  word-wrap: break-word;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+  width: 80%;
+  font-size: 40px;
+}
+.itemCounter .inner {
+        color: rgb(150, 150, 150);
+  padding: 10px;
+  border-radius: 0;
+  background-color: #f2f2f2;
+  word-wrap: break-word;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+}
+.itemCounter:before,
+.itemCounter:after {
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+  content: '';
+  display: block;
+  position: absolute;
+  height: 9px;
+  border-radius: 0;
+}
+.itemCounter:before {
+  bottom: -4px;
+  left: 4px;
+  right: 4px;
+  background-color: #f2f2f2;
+  z-index: 2;
+}
+.itemCounter:after {
+  bottom: -8px;
+  left: 8px;
+  right: 8px;
+  background-color: #f2f2f2;
+  z-index: 1;
+}
