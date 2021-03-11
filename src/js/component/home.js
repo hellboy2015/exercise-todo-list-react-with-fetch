@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NewTask } from "./newTask";
 
 //import { NewTask } from "./newTask.js";
 
@@ -7,16 +8,18 @@ export function Home() {
 	const [inputValue, setInputValue] = useState("");
 	const [taskList, setTaskList] = useState("");
 	const [isShown, setIsShown] = useState(false);
+	const [taskId, setTaskId] = useState(0);
 
 	const handleKeyDown = event => {
 		if (event.key === "Enter") {
-			setTaskList([...taskList, inputValue]);
+			setTaskId(taskId + 1);
+			setTaskList([...taskList, { id: taskId, input: inputValue }]);
 			setInputValue("");
 		}
 	};
 
 	function removeTask(taskToRemoveID) {
-		taskList.splice(taskToRemoveID, 1);
+		setTaskList(taskList.filter(task => task.id !== taskToRemoveID));
 	}
 
 	return (
@@ -40,22 +43,13 @@ export function Home() {
 						<div className="col-11">No tasks, add a task</div>
 					</div>
 				) : (
-					taskList.map((newTask, index) => (
-						<div
-							key={index}
-							className="newTask mx-auto row"
-							onMouseEnter={e => setIsShown(true)}
-							onMouseLeave={e => setIsShown(false)}>
-							<div className="col-11">{newTask}</div>
-
-							{isShown && (
-								<div
-									className="removeTask col-1"
-									onClick={e => removeTask(index)}>
-									X
-								</div>
-							)}
-						</div>
+					taskList.map(newTask => (
+						<NewTask
+							id={newTask.id}
+							key={newTask.id}
+							task={newTask.input}
+							myFunction={removeTask}
+						/>
 					))
 				)}
 			</div>

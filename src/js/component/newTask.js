@@ -13,7 +13,9 @@ export function NewTask(props) {
 			<div className="col-11">{props.task}</div>
 
 			{isShown && (
-				<div className="removeTask col-1" onClick={props.myFunction}>
+				<div
+					className="removeTask col-1"
+					onClick={() => props.myFunction(props.id)}>
 					X
 				</div>
 			)}
