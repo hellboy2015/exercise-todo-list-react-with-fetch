@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NewTask } from "./newTask";
 
 //import { NewTask } from "./newTask.js";
@@ -9,16 +9,51 @@ export function Home() {
 	const [taskList, setTaskList] = useState("");
 	const [isShown, setIsShown] = useState(false);
 	const [taskId, setTaskId] = useState(0);
+	const [isDone, setIsDone] = useState(false);
 
-	const handleKeyDown = event => {
+	useEffect(() => {
+		const getTasks = async () => {
+			const tasksFromServer = await fetchTask();
+			setTaskList(tasksFromServer);
+			setTaskId(tasksFromServer[tasksFromServer.length - 1].id + 1);
+		};
+		getTasks();
+	}, []);
+
+	const fetchTask = async () => {
+		const result = await fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015"
+		);
+
+		const data = await result.json();
+		return data;
+	};
+
+	const handleKeyDown = async event => {
 		if (event.key === "Enter") {
 			setTaskId(taskId + 1);
-			setTaskList([...taskList, { id: taskId, input: inputValue }]);
+			setTaskList([
+				...taskList,
+				{ id: taskId, label: inputValue, done: isDone }
+			]);
 			setInputValue("");
+			updateSeverTasks(taskList);
 		}
 	};
 
-	function removeTask(taskToRemoveID) {
+	async function updateSeverTasks(tasks) {
+		const response = await fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015",
+			{
+				method: "PUT",
+				headers: {
+					"Content-type": "application/json"
+				},
+				body: JSON.stringify(tasks)
+			}
+		);
+	}
+	async function removeTask(taskToRemoveID) {
 		setTaskList(taskList.filter(task => task.id !== taskToRemoveID));
 	}
 
@@ -47,7 +82,7 @@ export function Home() {
 						<NewTask
 							id={newTask.id}
 							key={newTask.id}
-							task={newTask.input}
+							task={newTask.label}
 							myFunction={removeTask}
 						/>
 					))
