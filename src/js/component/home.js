@@ -20,6 +20,13 @@ export function Home() {
 		getTasks();
 	}, []);
 
+	useEffect(
+		taskList => {
+			myTest();
+		},
+		[taskList]
+	);
+
 	const fetchTask = async () => {
 		const result = await fetch(
 			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015"
@@ -29,32 +36,42 @@ export function Home() {
 		return data;
 	};
 
+	function myTest() {
+		updateSeverTasks(taskList);
+	}
+
 	const handleKeyDown = async event => {
 		if (event.key === "Enter") {
-			setTaskId(taskId + 1);
-			setTaskList([
-				...taskList,
-				{ id: taskId, label: inputValue, done: isDone }
-			]);
-			setInputValue("");
-			updateSeverTasks(taskList);
+			await setTaskId(taskId + 1);
+
+			if (inputValue === "") {
+				alert("Task can't be empty");
+			} else {
+				await setTaskList([
+					...taskList,
+					{ id: taskId, label: inputValue, done: isDone }
+				]);
+				setInputValue("");
+			}
 		}
 	};
 
-	async function updateSeverTasks(tasks) {
-		const response = await fetch(
+	async function updateSeverTasks(tasksToUpdate) {
+		await fetch(
 			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015",
 			{
 				method: "PUT",
+				body: JSON.stringify(tasksToUpdate),
 				headers: {
-					"Content-type": "application/json"
-				},
-				body: JSON.stringify(tasks)
+					"Content-Type": "application/json"
+				}
 			}
-		);
+		).then(resp => {
+			return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+		});
 	}
 	async function removeTask(taskToRemoveID) {
-		setTaskList(taskList.filter(task => task.id !== taskToRemoveID));
+		await setTaskList(taskList.filter(task => task.id !== taskToRemoveID));
 	}
 
 	return (
