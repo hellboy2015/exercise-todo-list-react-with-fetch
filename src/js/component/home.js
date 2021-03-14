@@ -12,42 +12,27 @@ export function Home() {
 	const [isDone, setIsDone] = useState(false);
 
 	useEffect(() => {
-		const getTasks = async () => {
-			const tasksFromServer = await fetchTask();
-			setTaskList(tasksFromServer);
-			setTaskId(tasksFromServer[tasksFromServer.length - 1].id + 1);
-		};
-		getTasks();
+		fetchTasks();
 	}, []);
 
-	useEffect(
-		taskList => {
-			myTest();
-		},
-		[taskList]
-	);
-
-	const fetchTask = async () => {
+	const fetchTasks = async () => {
 		const result = await fetch(
 			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015"
 		);
 
 		const data = await result.json();
-		return data;
+		setTaskList(data);
+		setTaskId(data[data.length - 1].id + 1);
 	};
 
-	function myTest() {
-		updateSeverTasks(taskList);
-	}
-
-	const handleKeyDown = async event => {
+	const handleKeyDown = event => {
 		if (event.key === "Enter") {
-			await setTaskId(taskId + 1);
+			setTaskId(taskId + 1);
 
 			if (inputValue === "") {
 				alert("Task can't be empty");
 			} else {
-				await setTaskList([
+				updateSeverTasks([
 					...taskList,
 					{ id: taskId, label: inputValue, done: isDone }
 				]);
@@ -56,22 +41,27 @@ export function Home() {
 		}
 	};
 
-	async function updateSeverTasks(tasksToUpdate) {
-		await fetch(
+	function updateSeverTasks(test) {
+		var requestOptions = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(test),
+			redirect: "follow"
+		};
+
+		fetch(
 			"https://assets.breatheco.de/apis/fake/todos/user/hellboy2015",
-			{
-				method: "PUT",
-				body: JSON.stringify(tasksToUpdate),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			}
-		).then(resp => {
-			return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-		});
+			requestOptions
+		)
+			.then(response => response.text())
+			.then(fetchTasks)
+			.catch(error => console.log("error", error));
 	}
-	async function removeTask(taskToRemoveID) {
-		await setTaskList(taskList.filter(task => task.id !== taskToRemoveID));
+
+	function removeTask(taskToRemoveID) {
+		updateSeverTasks(taskList.filter(task => task.id !== taskToRemoveID));
 	}
 
 	return (
